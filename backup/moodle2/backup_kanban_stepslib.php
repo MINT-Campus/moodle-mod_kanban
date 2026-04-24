@@ -90,6 +90,7 @@ class backup_kanban_activity_structure_step extends backup_activity_structure_st
             ]
         );
         $card->annotate_files('mod_kanban', 'attachments', 'id');
+        $card->annotate_files('mod_kanban', 'coverimage', 'id');
         $card->annotate_ids('kanban_card_id', 'originalid');
 
         $assignees = new backup_nested_element('assignees');

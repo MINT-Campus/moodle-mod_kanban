@@ -491,9 +491,11 @@ a.mod_kanban_attachment_item {
     top: .1rem;
 }
 
-.mod_kanban_filters {
+
+.row.mod_kanban_filters {
     position: relative;
     margin-bottom: 10px;
+    margin-left: var(--bs-gutter-x);
 }
 
 .mod_kanban_column.mod_kanban_column_collimit.mod_kanban_limit_warning {
@@ -526,4 +528,9 @@ a.mod_kanban_attachment_item {
 .mod_kanban_notification_container {
     position: absolute;
     z-index: 1000;
+}
+
+.mod_kanban_card_cover img {
+    border-top-left-radius: var(--bs-card-border-radius);
+    border-top-right-radius: var(--bs-card-border-radius);
 }

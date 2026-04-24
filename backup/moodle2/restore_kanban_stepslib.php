@@ -146,6 +146,7 @@ class restore_kanban_activity_structure_step extends restore_activity_structure_
         $newid = $DB->insert_record('kanban_card', $data);
         $this->set_mapping('kanban_card_id', $oldid, $newid, true);
         $this->add_related_files('mod_kanban', 'attachments', 'kanban_card_id', null, $oldid);
+        $this->add_related_files('mod_kanban', 'coverimage', 'kanban_card_id', null, $oldid);
     }
 
     /**

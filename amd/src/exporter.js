@@ -125,6 +125,8 @@ export default class {
             options: '{}',
             canedit: false,
             number: 0,
+            coverimage: {url: '', name: ''},
+            descriptionsummary: '',
         };
         if (state.cards.get(cardid) !== undefined) {
             card = JSON.parse(JSON.stringify(state.cards.get(cardid)));

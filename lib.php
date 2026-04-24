@@ -186,6 +186,10 @@ function kanban_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
     global $DB;
     require_course_login($course, true, $cm);
 
+    if (!in_array($filearea, ['attachments', 'coverimage'])) {
+        return false;
+    }
+
     // In $args[0] is the card id.
 
     $cardid = intval($args[0]);

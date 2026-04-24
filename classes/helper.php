@@ -205,6 +205,47 @@ class helper {
     }
 
     /**
+     * Get the dedicated cover image for a card.
+     *
+     * @param int $contextid Context id of the board
+     * @param int $cardid Id of the card
+     * @return array Cover image metadata
+     */
+    public static function get_cover_image(int $contextid, int $cardid): array {
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($contextid, 'mod_kanban', 'coverimage', $cardid, 'filename', false);
+        $coverimage = reset($files);
+
+        if (!$coverimage) {
+            return ['url' => '', 'name' => ''];
+        }
+
+        return [
+            'url' => \moodle_url::make_pluginfile_url(
+                $contextid,
+                'mod_kanban',
+                'coverimage',
+                $cardid,
+                $coverimage->get_filepath(),
+                $coverimage->get_filename()
+            )->out(),
+            'name' => $coverimage->get_filename(),
+        ];
+    }
+
+    /**
+     * Build a compact cleaned HTML preview for a card description.
+     *
+     * @param string $description Rich text description
+     * @return string Cleaned HTML description summary
+     */
+    public static function get_description_summary(string $description): string {
+        $summary = shorten_text(trim($description), 180);
+
+        return clean_param($summary ?? '', PARAM_CLEANHTML);
+    }
+
+    /**
      * Send a notification to a user.
      *
      * @param cm_info $cm The affected course module

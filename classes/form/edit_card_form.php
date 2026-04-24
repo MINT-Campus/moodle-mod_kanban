@@ -108,6 +108,12 @@ class edit_card_form extends dynamic_form {
         $mform->disabledIf('repeat_interval_type', 'repeat_newduedate', 'eq', constants::MOD_KANBAN_REPEAT_NONEWDUEDATE);
         $mform->addHelpButton('repeatgroup', 'repeat', 'kanban');
 
+        $mform->addElement('filemanager', 'coverimage', get_string('coverimage', 'mod_kanban'), null, [
+            'accepted_types' => ['image'],
+            'maxfiles' => 1,
+            'subdirs' => 0,
+        ]);
+
         $mform->addElement('filemanager', 'attachments', get_string('attachments', 'kanban'));
 
         $mform->addElement('color', 'color', get_string('color', 'mod_kanban'), ['size' => 5]);
@@ -175,6 +181,15 @@ class edit_card_form extends dynamic_form {
             $formdata->description
         );
 
+        file_save_draft_area_files(
+            $formdata->coverimage,
+            $context->id,
+            'mod_kanban',
+            'coverimage',
+            $formdata->id,
+            ['accepted_types' => ['image'], 'maxfiles' => 1, 'subdirs' => 0]
+        );
+
         $boardmanager = new boardmanager($cmid, $boardid);
 
         $boardmanager->update_card($formdata->id, (array) $formdata);
@@ -212,6 +227,17 @@ class edit_card_form extends dynamic_form {
         $card->description_editor['format'] = $card->descriptionformat;
         $card->description_editor['itemid'] = $draftitemid;
         $card->attachments = $draftitemid;
+
+        $coverdraftitemid = file_get_submitted_draft_itemid('coverimage');
+        file_prepare_draft_area(
+            $coverdraftitemid,
+            $context->id,
+            'mod_kanban',
+            'coverimage',
+            $card->id,
+            ['accepted_types' => ['image'], 'maxfiles' => 1, 'subdirs' => 0]
+        );
+        $card->coverimage = $coverdraftitemid;
         $this->set_data($card);
     }
 

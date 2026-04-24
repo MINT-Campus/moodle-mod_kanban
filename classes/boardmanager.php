@@ -362,6 +362,7 @@ class boardmanager {
             $DB->delete_records('kanban_assignee', ['kanban_card' => $cardid]);
             $context = context_module::instance($this->cmid, IGNORE_MISSING);
             $fs->delete_area_files($context->id, 'mod_kanban', 'attachments', $cardid);
+            $fs->delete_area_files($context->id, 'mod_kanban', 'coverimage', $cardid);
             $card = $this->get_card($cardid);
             if ($updatecolumn) {
                 $column = $DB->get_record('kanban_column', ['id' => $card->kanban_column]);
@@ -505,6 +506,9 @@ class boardmanager {
 
         $data['id'] = $DB->insert_record('kanban_card', $data);
         $data['assignees'] = [];
+        $data['coverimage'] = ['url' => '', 'name' => ''];
+        $data['hascoverimage'] = false;
+        $data['descriptionsummary'] = helper::get_description_summary($data['description'] ?? '');
         // Sanitize title to be extra safe.
         $data['title'] = clean_param($data['title'], PARAM_TEXT);
 
@@ -1103,9 +1107,13 @@ class boardmanager {
                 );
             }
         }
+        $description = $cardupdate['description'] ?? $card['description'] ?? '';
         $cardupdate['attachments'] = helper::get_attachments($context->id, $cardid);
         $cardupdate['hasattachment'] = count($cardupdate['attachments']) > 0;
-        $cardupdate['hasdescription'] = !empty(trim($cardupdate['description'])) || $cardupdate['hasattachment'];
+        $cardupdate['hasdescription'] = !empty(trim($description)) || $cardupdate['hasattachment'];
+        $cardupdate['coverimage'] = helper::get_cover_image($context->id, $cardid);
+        $cardupdate['hascoverimage'] = !empty($cardupdate['coverimage']['url']);
+        $cardupdate['descriptionsummary'] = helper::get_description_summary($description);
         if (!empty($cardupdate['description'])) {
             $cardupdate['description'] = file_rewrite_pluginfile_urls(
                 $cardupdate['description'],
@@ -1381,7 +1389,7 @@ class boardmanager {
     }
 
     /**
-     * Copy attachment files from one card to another (works only inside the same kanban instance). Overwrites files that have
+     * Copy card files from one card to another (works only inside the same kanban instance). Overwrites files that have
      * the same filename.
      *
      * @param int $contextid Context id of the instance
@@ -1391,20 +1399,22 @@ class boardmanager {
      */
     public function copy_attachment_files(int $contextid, int $cardid, int $newcardid): void {
         $fs = get_file_storage();
-        $attachments = $fs->get_area_files($contextid, 'mod_kanban', 'attachments', $cardid, 'filename', false);
-        foreach ($attachments as $attachment) {
-            $existingfile = $fs->get_file(
-                $contextid,
-                'mod_kanban',
-                'attachments',
-                $newcardid,
-                $attachment->get_filepath(),
-                $attachment->get_filename()
-            );
-            if ($existingfile) {
-                $existingfile->delete();
+        foreach (['attachments', 'coverimage'] as $filearea) {
+            $attachments = $fs->get_area_files($contextid, 'mod_kanban', $filearea, $cardid, 'filename', false);
+            foreach ($attachments as $attachment) {
+                $existingfile = $fs->get_file(
+                    $contextid,
+                    'mod_kanban',
+                    $filearea,
+                    $newcardid,
+                    $attachment->get_filepath(),
+                    $attachment->get_filename()
+                );
+                if ($existingfile) {
+                    $existingfile->delete();
+                }
+                $fs->create_file_from_storedfile(['itemid' => $newcardid], $attachment);
             }
-            $fs->create_file_from_storedfile(['itemid' => $newcardid], $attachment);
         }
     }
 

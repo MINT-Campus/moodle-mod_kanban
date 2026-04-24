@@ -564,6 +564,31 @@ export default class extends KanbanComponent {
         }
         this.toggleClass(element.hasdescription, 'mod_kanban_hasdescription');
         this.toggleClass(element.hasattachment, 'mod_kanban_hasattachment');
+        this.toggleClass(element.hascoverimage, 'mod_kanban_hascoverimage');
+        if (element.coverimage !== undefined || element.hascoverimage !== undefined) {
+            const cover = this.getElement(selectors.CARDCOVER);
+            if (cover) {
+                cover.innerHTML = '';
+                if (element.hascoverimage && element.coverimage && element.coverimage.url) {
+                    const image = document.createElement('img');
+                    image.src = element.coverimage.url;
+                    image.alt = element.coverimage.name || '';
+                    image.classList.add('img-fluid');
+                    image.loading = 'lazy';
+                    cover.appendChild(image);
+                    cover.classList.remove('hidden');
+                } else {
+                    cover.classList.add('hidden');
+                }
+            }
+        }
+        if (element.descriptionsummary !== undefined) {
+            const summary = this.getElement(selectors.CARDSUMMARY);
+            if (summary) {
+                summary.innerHTML = element.descriptionsummary;
+                summary.classList.toggle('hidden', element.descriptionsummary.trim() === '');
+            }
+        }
         // Update due date.
         if (element.duedate !== undefined) {
             this.getElement(selectors.DUEDATE).setAttribute('data-date', element.duedate);

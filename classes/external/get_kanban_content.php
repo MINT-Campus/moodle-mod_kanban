@@ -190,6 +190,12 @@ class get_kanban_content extends external_api {
                                     VALUE_OPTIONAL,
                                     ''
                                 ),
+                                'descriptionsummary' => new external_value(
+                                    PARAM_RAW,
+                                    'cleaned HTML description summary',
+                                    VALUE_OPTIONAL,
+                                    ''
+                                ),
                                 'hasattachment' => new external_value(
                                     PARAM_BOOL,
                                     'has an attachment?',
@@ -202,6 +208,21 @@ class get_kanban_content extends external_api {
                                         'name' => new external_value(PARAM_TEXT, 'filename', VALUE_REQUIRED),
                                     ]),
                                     'attachments',
+                                    VALUE_OPTIONAL,
+                                    []
+                                ),
+                                'hascoverimage' => new external_value(
+                                    PARAM_BOOL,
+                                    'has a cover image?',
+                                    VALUE_OPTIONAL,
+                                    false
+                                ),
+                                'coverimage' => new external_single_structure(
+                                    [
+                                        'url' => new external_value(PARAM_URL, 'cover image url', VALUE_OPTIONAL, ''),
+                                        'name' => new external_value(PARAM_TEXT, 'filename', VALUE_OPTIONAL, ''),
+                                    ],
+                                    'cover image',
                                     VALUE_OPTIONAL,
                                     []
                                 ),
@@ -578,8 +599,11 @@ class get_kanban_content extends external_api {
                 if ($common->usenumbers && $common->linknumbers) {
                     $card->description = numberfilter::filter($card->description);
                 }
+                $card->descriptionsummary = helper::get_description_summary($card->description);
                 $card->attachments = helper::get_attachments($context->id, $card->id);
                 $card->hasattachment = count($card->attachments) > 0;
+                $card->coverimage = helper::get_cover_image($context->id, $card->id);
+                $card->hascoverimage = !empty($card->coverimage['url']);
             }
         }
 

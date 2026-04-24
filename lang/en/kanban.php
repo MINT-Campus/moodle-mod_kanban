@@ -63,6 +63,7 @@ $string['connectionlost'] = 'Connection lost';
 $string['connectionlostmessage'] = 'Connection to the server was lost. Trying to reconnect...';
 $string['copycardlink'] = 'Copy card link';
 $string['copycardlinkfailed'] = 'Failed to copy card link';
+$string['coverimage'] = 'Cover image';
 $string['courseboard'] = 'Shared board';
 $string['createtemplate'] = 'Create template';
 $string['deleteboard'] = 'Delete board';

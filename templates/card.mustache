@@ -34,7 +34,12 @@
         "createdbyname": "Berti Beispiel"
     }
 }}
-<li style="{{#background}}background-color: {{background}}{{/background}}" class="mod_kanban_card card{{#completed}} mod_kanban_closed{{/completed}} {{^hasassignees}}mod_kanban_unassigned{{/hasassignees}} {{#hasdescription}}mod_kanban_hasdescription{{/hasdescription}} {{#hasattachment}}mod_kanban_hasattachment{{/hasattachment}} {{#hasdiscussion}}mod_kanban_hasdiscussion{{/hasdiscussion}} {{#selfassigned}}mod_kanban_selfassigned{{/selfassigned}} {{#discussion}}mod_kanban_hasdiscussion{{/discussion}} {{#canedit}}mod_kanban_canedit{{/canedit}}" id="mod_kanban_card-{{id}}" data-id="{{id}}" data-columnid="{{kanban_column}}" data-number="{{number}}">
+<li style="{{#background}}background-color: {{background}}{{/background}}" class="mod_kanban_card card{{#completed}} mod_kanban_closed{{/completed}} {{^hasassignees}}mod_kanban_unassigned{{/hasassignees}} {{#hasdescription}}mod_kanban_hasdescription{{/hasdescription}} {{#hasattachment}}mod_kanban_hasattachment{{/hasattachment}} {{#hascoverimage}}mod_kanban_hascoverimage{{/hascoverimage}} {{#hasdiscussion}}mod_kanban_hasdiscussion{{/hasdiscussion}} {{#selfassigned}}mod_kanban_selfassigned{{/selfassigned}} {{#discussion}}mod_kanban_hasdiscussion{{/discussion}} {{#canedit}}mod_kanban_canedit{{/canedit}}" id="mod_kanban_card-{{id}}" data-id="{{id}}" data-columnid="{{kanban_column}}" data-number="{{number}}">
+    <div class="mod_kanban_card_cover{{^hascoverimage}} hidden{{/hascoverimage}}">
+        {{#hascoverimage}}
+            <img src="{{coverimage.url}}" alt="{{coverimage.name}}" class="img-fluid" loading="lazy">
+        {{/hascoverimage}}
+    </div>
     <div class="card-body">
         <div class="mod_kanban_card_title card-title"><span class="mod_kanban_card_number">#{{number}}</span>
             <span class="inplaceeditable inplaceeditable-text"{{#canedit}}{{^completed}} data-inplaceeditable="1" data-component="mod_kanban" data-itemtype="card" data-itemid="{{id}}"
@@ -52,6 +57,9 @@
         {{#duedate}}
             {{#userdate}} {{duedate}}, {{#str}} strftimedate, core_langconfig {{/str}} {{/userdate}}
         {{/duedate}}
+        </div>
+        <div class="mod_kanban_card_summary{{^descriptionsummary}} hidden{{/descriptionsummary}}">
+            {{{descriptionsummary}}}
         </div>
         <div class="mod_kanban_tags">
         </div>
